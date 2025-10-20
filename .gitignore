@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# Big Data & Hadoop
+*.log
+*.parquet
+*.avro
+metastore_db/
+derby.log
+
+# Dados grandes (não commitar)
+data/raw/*.csv
+data/raw/*.parquet
+data/processed/*.parquet
+*.jar
+*.tar.gz
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credentials
+*.pem
+*.key
+credentials.json
+.env
+
+# Docker
+.docker/
+
+# Temporários
+tmp/
+temp/
+*.tmp
