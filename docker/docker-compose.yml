@@ -1,0 +1,149 @@
+services:
+  # ============================================
+  # HADOOP NAMENODE (HDFS Master)
+  # ============================================
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    restart: always
+    ports:
+      - "9870:9870"  # Web UI
+      - "9000:9000"  # HDFS
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+      - ../data:/data  # Mapeamento para acessar dados locais
+    environment:
+      - CLUSTER_NAME=exoplanet
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+    env_file:
+      - ./hadoop.env
+    networks:
+      - exoplanet-network
+
+  # ============================================
+  # HADOOP DATANODE (HDFS Worker)
+  # ============================================
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    restart: always
+    volumes:
+      - hadoop_datanode:/hadoop/dfs/data
+    environment:
+      - SERVICE_PRECONDITION=namenode:9870
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+    env_file:
+      - ./hadoop.env
+    networks:
+      - exoplanet-network
+    depends_on:
+      - namenode
+
+  # ============================================
+  # SPARK MASTER
+  # ============================================
+  spark-master:
+    image: bde2020/spark-master:3.1.1-hadoop3.2
+    container_name: spark-master
+    restart: always
+    ports:
+      - "8080:8080"  # Web UI
+      - "7077:7077"  # Spark Master
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+    volumes:
+      - ../scripts:/scripts
+      - ../data:/data
+    networks:
+      - exoplanet-network
+    depends_on:
+      - namenode
+
+  # ============================================
+  # SPARK WORKER
+  # ============================================
+  spark-worker:
+    image: bde2020/spark-worker:3.1.1-hadoop3.2
+    container_name: spark-worker
+    restart: always
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2g
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+    volumes:
+      - ../scripts:/scripts
+      - ../data:/data
+    networks:
+      - exoplanet-network
+    depends_on:
+      - spark-master
+
+  # ============================================
+  # HIVE SERVER
+  # ============================================
+  hive-server:
+    image: bde2020/hive:2.3.2-postgresql-metastore
+    container_name: hive-server
+    restart: always
+    env_file:
+      - ./hadoop.env
+    environment:
+      - HIVE_CORE_CONF_javax_jdo_option_ConnectionURL=jdbc:postgresql://hive-metastore/metastore
+      - SERVICE_PRECONDITION=hive-metastore:9083
+    ports:
+      - "10000:10000"  # HiveServer2
+      - "10002:10002"  # Web UI
+    volumes:
+      - ../sql:/sql
+    networks:
+      - exoplanet-network
+    depends_on:
+      - hive-metastore
+
+  # ============================================
+  # HIVE METASTORE
+  # ============================================
+  hive-metastore:
+    image: bde2020/hive:2.3.2-postgresql-metastore
+    container_name: hive-metastore
+    restart: always
+    env_file:
+      - ./hadoop.env
+    command: /opt/hive/bin/hive --service metastore
+    environment:
+      - SERVICE_PRECONDITION=namenode:9870 datanode:9864 hive-metastore-postgresql:5432
+    ports:
+      - "9083:9083"
+    networks:
+      - exoplanet-network
+    depends_on:
+      - hive-metastore-postgresql
+
+  # ============================================
+  # POSTGRESQL (Hive Metastore Database)
+  # ============================================
+  hive-metastore-postgresql:
+    image: bde2020/hive-metastore-postgresql:2.3.0
+    container_name: hive-metastore-postgresql
+    restart: always
+    volumes:
+      - hive_postgresql:/var/lib/postgresql/data
+    networks:
+      - exoplanet-network
+
+# ============================================
+# VOLUMES (Persistent Storage)
+# ============================================
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:
+  hive_postgresql:
+
+# ============================================
+# NETWORK
+# ============================================
+networks:
+  exoplanet-network:
+    driver: bridge
