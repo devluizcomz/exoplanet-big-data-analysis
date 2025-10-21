@@ -1,243 +1,234 @@
-# 🪐 Hunting for Earth 2.0: Big Data Analysis of 5,600+ Exoplanets
+# 🌍 Exoplanet Big Data Analysis: Hunting for Earth 2.0
 
-<p align="center">
-  <img src="images/cover-image.png" alt="Exoplanet Analysis" width="800"/>
-</p>
+![Python](https://img.shields.io/badge/python-v3.10+-blue.svg)
+![Hadoop](https://img.shields.io/badge/hadoop-v3.3-yellow.svg)
+![Spark](https://img.shields.io/badge/spark-v3.5-orange.svg)
+![Hive](https://img.shields.io/badge/hive-v3.1-green.svg)
+![Docker](https://img.shields.io/badge/docker-containerized-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![NASA Data](https://img.shields.io/badge/Data-NASA%20Exoplanet%20Archive-blue)](https://exoplanetarchive.ipac.caltech.edu/)
-[![Apache Spark](https://img.shields.io/badge/Apache-Spark-orange)](https://spark.apache.org/)
-[![Hadoop](https://img.shields.io/badge/Apache-Hadoop-green)](https://hadoop.apache.org/)
+> **Análise de 5,759 exoplanetas do NASA Exoplanet Archive usando Apache Hadoop, Spark e Hive para identificar candidatos habitáveis à "Terra 2.0"**
 
-> **"Using Big Data technologies to search for potentially habitable worlds among thousands of confirmed exoplanets"**
+## 📊 Relatório Interativo
+🚀 **[Ver Análise Completa (Relatório HTML)](https://fmlwhgoa.gensparkspace.com/)**
 
----
+## 🎯 Principais Descobertas
 
-## 🎯 Project Overview
+- **5,759 exoplanetas** analisados do NASA Exoplanet Archive
+- **65 candidatos habitáveis** identificados (1.13% do dataset)
+- **3 planetas com score perfeito** de habitabilidade (4.0/4.0)
+- **Kepler-442 b** como melhor candidato a "Terra 2.0"
+- **71.4% das descobertas** usam método Transit
 
-This project applies **Big Data technologies** (Hadoop, Spark, Hive) to analyze over **5,600 confirmed exoplanets** from NASA's Exoplanet Archive, identifying potentially habitable worlds and uncovering fascinating patterns in planetary systems across our galaxy.
+## 🏆 Top 3 Candidatos a Terra 2.0
 
-### 🌟 Key Highlights
+| Posição | Planeta | Score | Raio (×Terra) | Temperatura | Distância |
+|---------|---------|-------|---------------|-------------|-----------|
+| 🥇 | **Kepler-442 b** | 4.0/4.0 | 1.34× | 233 K (-40°C) | 1,206 anos-luz |
+| 🥈 | Kepler-62 f | 4.0/4.0 | 1.41× | 208 K (-65°C) | 1,200 anos-luz |
+| 🥉 | Kepler-186 f | 4.0/4.0 | 1.17× | 188 K (-85°C) | 580 anos-luz |
 
-- 📊 **5,600+ exoplanets** analyzed from NASA Kepler & TESS missions
-- 🌍 **Habitability scoring system** based on Earth-like characteristics
-- 🔭 **Multi-dimensional analysis**: size, temperature, orbital period, host star properties
-- 📈 **Temporal analysis**: Discovery trends from 1992 to 2025
-- 🚀 **Scalable pipeline**: Hadoop + Spark + Hive for big data processing
+## 🛠️ Stack Tecnológico
 
----
+### Core Technologies
+- **Apache Hadoop 3.3** - Distributed storage (HDFS)
+- **Apache Spark 3.5** - Distributed processing (PySpark)
+- **Apache Hive 3.1** - Data warehouse and SQL queries
+- **Python 3.10** - Data processing and analysis
+- **Docker** - Containerized environment
 
-## 🏗️ Architecture
+### Data Formats & Tools
+- **Parquet** - Columnar storage format
+- **PostgreSQL** - Hive Metastore
+- **Jupyter Notebooks** - Interactive analysis
+- **Matplotlib/Seaborn** - Data visualizations
+
+## 🏗️ Arquitetura do Sistema
 
 ```
-┌─────────────────┐
-│   NASA API      │
-│ Exoplanet Data  │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│      HDFS       │
-│  Distributed    │
-│    Storage      │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Apache Spark   │
-│   Processing    │
-│ Feature Eng.    │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Apache Hive    │
-│  Data Warehouse │
-│  SQL Queries    │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│   Insights &    │
-│ Visualizations  │
-└─────────────────┘
+NASA Exoplanet Archive API
+          ↓
+    [Raw Data Ingestion]
+          ↓
+      HDFS Storage
+          ↓
+    Spark Processing
+    (Feature Engineering)
+          ↓
+    Parquet Files (HDFS)
+          ↓
+    Hive External Tables
+          ↓
+   Analysis & Insights
 ```
 
----
-
-## 🔬 Methodology
-
-### Habitability Score (0-4)
-
-Each exoplanet receives a score based on four criteria:
-
-1. **Earth-like Size** (0.5 - 2.0 Earth radii)
-2. **Habitable Temperature** (200K - 350K / -73°C to 77°C)
-3. **Sun-like Host Star** (4000K - 7000K)
-4. **Reasonable Distance** (< 1000 parsecs / ~3,260 light-years)
-
-**Score 3-4**: Strong candidates for habitability 🌍  
-**Score 2**: Potentially interesting  
-**Score 0-1**: Unlikely to be habitable
-
----
-
-## 📊 Key Findings
-
-### 🌍 Top Earth 2.0 Candidates
-
-| Planet Name | Distance (ly) | Radius (Earth=1) | Temp (°C) | Score |
-|------------|---------------|------------------|-----------|-------|
-| *[To be filled after analysis]* | - | - | - | 4 |
-
-### 📈 Discovery Trends
-
-- **Total confirmed exoplanets**: 5,600+
-- **Kepler mission contribution**: ~70% of all discoveries
-- **Potentially habitable candidates**: [TBD]
-- **Closest habitable candidate**: [TBD] light-years away
-
-### 🔭 Detection Methods
-
-- **Transit method**: Most effective (~75%)
-- **Radial velocity**: ~20%
-- **Direct imaging**: ~3%
-- **Microlensing & others**: ~2%
-
----
-
-## 🛠️ Tech Stack
-
-| Technology | Purpose |
-|------------|---------|
-| **Apache Hadoop** | Distributed storage (HDFS) |
-| **Apache Spark** | Large-scale data processing |
-| **Apache Hive** | Data warehousing & SQL queries |
-| **Python** | Data pipeline & visualizations |
-| **Docker** | Containerized environment |
-| **Pandas** | Data manipulation |
-| **Matplotlib/Seaborn** | Visualizations |
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Docker & Docker Compose
-- Python 3.8+
-- 8GB+ RAM
-- 20GB+ disk space
-
-### Quick Start
-
-```bash
-# Clone repository
-git clone https://github.com/[your-username]/exoplanet-big-data-analysis.git
-cd exoplanet-big-data-analysis
-
-# Start Hadoop/Spark cluster
-cd docker
-docker-compose up -d
-
-# Download NASA data
-python scripts/01_download_data.py
-
-# Upload to HDFS
-hdfs dfs -put data/raw/exoplanets_raw.csv /user/exoplanets/raw/
-
-# Run Spark analysis
-spark-submit scripts/02_spark_analysis.py
-
-# Create Hive tables
-beeline -u jdbc:hive2://localhost:10000 -f sql/create_tables.sql
-
-# Run analysis queries
-beeline -u jdbc:hive2://localhost:10000 -f sql/analysis_queries.sql
-```
-
----
-
-## 📁 Project Structure
+## 📁 Estrutura do Projeto
 
 ```
 exoplanet-big-data-analysis/
-├── data/                   # Raw & processed data
-├── scripts/                # Python processing scripts
-├── sql/                    # Hive SQL queries
-├── docker/                 # Docker configuration
-├── docs/                   # Technical documentation
-├── images/                 # Visualizations & screenshots
-└── linkedin/               # Marketing materials
+├── README.md                          # Este arquivo
+├── docker/                           # Docker setup
+│   ├── docker-compose.yml           # Orquestração de serviços
+│   ├── hadoop.env                   # Configurações Hadoop
+│   └── README.md                    # Documentação Docker
+├── scripts/                         # Scripts de processamento
+│   ├── 01_download_data.py          # Download dos dados
+│   ├── 02_spark_analysis.py         # Processamento Spark
+│   ├── 03_generate_insights.py      # Geração de insights
+│   └── 04_create_visualizations.py  # Criação de gráficos
+├── sql/                             # Scripts SQL
+│   ├── create_tables.sql            # DDL Hive
+│   └── analysis_queries.sql         # Consultas analíticas
+├── data/                            # Dados do projeto
+│   ├── raw/                         # Dados brutos
+│   │   └── exoplanets_raw.csv       # Dataset NASA
+│   └── processed/                   # Dados processados
+│       ├── planets_enriched/        # Planetas com features
+│       ├── earth_candidates/        # Candidatos habitáveis
+│       ├── discovery_stats/         # Stats por método
+│       └── category_stats/          # Stats por categoria
+├── docs/                            # Documentação
+│   ├── insights.md                  # Insights detalhados
+│   ├── architecture.md              # Arquitetura técnica
+│   └── data-dictionary.md           # Dicionário de dados
+├── visualizations/                  # Gráficos gerados
+│   ├── 01_discovery_methods.png     # Métodos descoberta
+│   ├── 02_planet_categories.png     # Categorias planetas
+│   ├── 03_top5_candidates.png       # Top 5 candidatos
+│   ├── 04_general_stats.png         # Dashboard estatísticas
+│   ├── 05_earth_comparison.png      # Comparação Terra
+│   └── 06_journey_infographic.png   # Infográfico jornada
+└── venv/                            # Python virtual environment
 ```
 
+## 🚀 Como Executar o Projeto
+
+### 1. Pré-requisitos
+```bash
+# Instalar Docker e Docker Compose
+docker --version
+docker-compose --version
+
+# Instalar Python 3.10+
+python --version
+```
+
+### 2. Clonar o Repositório
+```bash
+git clone https://github.com/yourusername/exoplanet-big-data-analysis.git
+cd exoplanet-big-data-analysis
+```
+
+### 3. Setup do Ambiente Python
+```bash
+# Criar ambiente virtual
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# ou
+venv\Scripts\activate   # Windows
+
+# Instalar dependências
+pip install requests pandas matplotlib seaborn jupyter pyspark
+```
+
+### 4. Iniciar Stack Big Data
+```bash
+cd docker
+docker-compose up -d
+
+# Verificar serviços
+docker-compose ps
+```
+
+### 5. Executar Pipeline de Dados
+```bash
+# 1. Download dos dados
+python scripts/01_download_data.py
+
+# 2. Processamento Spark
+docker exec -it spark-master /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /app/scripts/02_spark_analysis.py
+
+# 3. Gerar insights
+docker exec -it spark-master /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /app/scripts/03_generate_insights.py
+
+# 4. Criar visualizações
+python scripts/04_create_visualizations.py
+```
+
+### 6. Acessar Interfaces Web
+- **Hadoop NameNode:** http://localhost:9870
+- **Spark Master:** http://localhost:8080
+- **Hive Server:** http://localhost:10002
+
+## 🔬 Metodologia
+
+### Habitability Score (0-4 pontos)
+Desenvolvi um score customizado baseado em 4 critérios:
+
+| Critério | Pontos | Range | Descrição |
+|----------|--------|-------|-----------|
+| Tamanho do Planeta | +1 | 0.5-2× Terra | Similar ao tamanho da Terra |
+| Temperatura | +1 | 200-350 K | Faixa adequada para água líquida |
+| Tipo de Estrela | +1 | 4500-7000 K | Estrela hospedeira tipo Sol |
+| Distância da Terra | +1 | <500 parsecs | Relativamente próximo |
+
+### Feature Engineering
+```python
+# Exemplo de cálculo do score
+def calculate_habitability_score(planet):
+    score = 0
+    if 0.5 <= planet.radius <= 2.0: score += 1      # Tamanho
+    if 200 <= planet.temperature <= 350: score += 1  # Temperatura  
+    if 4500 <= planet.star_temp <= 7000: score += 1 # Estrela
+    if planet.distance < 500: score += 1            # Distância
+    return score
+```
+
+## 📈 Performance
+
+- **Processamento:** ~5,759 exoplanetas em **segundos** (Spark in-memory)
+- **Storage:** Dados comprimidos em formato Parquet (eficiência de armazenamento)
+- **Escalabilidade:** Arquitetura preparada para datasets 100x maiores
+
+## 📖 Documentação Adicional
+
+- 📊 **[Insights Detalhados](docs/insights.md)** - Análises aprofundadas e descobertas
+- 🏗️ **[Arquitetura Técnica](docs/architecture.md)** - Detalhes da implementação
+- 📚 **[Dicionário de Dados](docs/data-dictionary.md)** - Descrição das variáveis
+
+## 🤝 Contribuições
+
+Contribuições são bem-vindas! Por favor:
+1. Faça fork do projeto
+2. Crie sua feature branch (`git checkout -b feature/nova-analise`)
+3. Commit suas mudanças (`git commit -am 'Adiciona nova análise'`)
+4. Push para a branch (`git push origin feature/nova-analise`)
+5. Crie um Pull Request
+
+## 📄 Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 📞 Contato
+
+**Luiz [Seu Sobrenome]** - [Seu Email]
+- 💼 LinkedIn: [Seu LinkedIn]
+- 🐱 GitHub: [Seu GitHub]
+- 🌐 Portfolio: [Seu Site]
+
+## 🙏 Agradecimentos
+
+- 🌌 **NASA Exoplanet Archive** - Pelos dados públicos
+- 🚀 **Apache Foundation** - Pelas ferramentas open source (Hadoop, Spark, Hive)
+- 🐳 **Docker Community** - Pela containerização simplificada
+- 👥 **Cloudera/Hortonworks** - Pela documentação e melhores práticas
+
 ---
 
-## 📖 Documentation
+⭐ **Se este projeto foi útil, considere dar uma estrela!** ⭐
 
-- [Architecture Details](docs/architecture.md)
-- [Data Dictionary](docs/data-dictionary.md)
-- [Analysis Insights](docs/insights.md)
-
----
-
-## 🎓 Learning Outcomes
-
-This project demonstrates:
-
-- ✅ **Big Data pipeline design** for real-world datasets
-- ✅ **Distributed computing** with Hadoop & Spark
-- ✅ **Data warehousing** with Hive
-- ✅ **Feature engineering** for scientific data
-- ✅ **SQL optimization** for analytical queries
-- ✅ **Docker containerization** for reproducibility
-
----
-
-## 📊 Results & Insights
-
-> **[Results will be added after completing the analysis]**
-
-Preview of what we'll discover:
-- How many potentially habitable exoplanets exist?
-- Which star systems are most promising?
-- How has exoplanet discovery evolved over time?
-- What makes a planet "Earth-like"?
-
----
-
-## 🤝 Contributing
-
-This is a personal learning project, but suggestions and feedback are welcome! Feel free to open an issue or reach out.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **NASA Exoplanet Archive** for providing open access to exoplanet data
-- **Apache Software Foundation** for Hadoop, Spark, and Hive
-- **Kepler & TESS missions** for revolutionary exoplanet discoveries
-
----
-
-## 📬 Contact
-
-**Luiz Heming**  
-💼 LinkedIn: [linkedin.com/in/luizheming](https://linkedin.com/in/luizheming)  
-🐙 GitHub: [github.com/[your-username]](https://github.com/[your-username])
-
----
-
-<p align="center">
-  <i>🌌 Exploring the universe, one dataset at a time</i>
-</p>
-
-<p align="center">
-  Made with ❤️ and ☕ | Powered by Big Data
-</p>
+**🌍 A busca por vida continua... e Big Data está acelerando nossas descobertas!** 🚀
