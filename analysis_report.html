@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hunting for Earth 2.0 with Big Data | NASA Exoplanet Analysis</title>
+    
+    <!-- CDN Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: radial-gradient(ellipse at center, #0B3D91 0%, #041e49 50%, #000000 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Stars effect */
+        .stars::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.4), transparent),
+                radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.7), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: sparkle 20s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes sparkle {
+            from { transform: translateX(0); }
+            to { transform: translateX(200px); }
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .nasa-gradient {
+            background: linear-gradient(135deg, #0B3D91, #FC3D21);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px !important;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #FC3D21, #0B3D91);
+        }
+    </style>
+</head>
+<body class="stars">
+    <div class="container mx-auto px-6 py-12 max-w-6xl">
+        
+        <!-- HEADER/HERO SECTION -->
+        <div class="text-center mb-16">
+            <div class="nasa-gradient text-transparent bg-clip-text mb-6">
+                <h1 class="text-6xl font-black mb-4">🌍 Hunting for Earth 2.0 with Big Data</h1>
+            </div>
+            <h2 class="text-3xl text-white font-light mb-6">Análise de 5,759 Exoplanetas do NASA Exoplanet Archive</h2>
+            <div class="flex flex-wrap justify-center gap-4 text-lg">
+                <span class="bg-blue-900 text-white px-4 py-2 rounded-full">Apache Hadoop</span>
+                <span class="bg-orange-600 text-white px-4 py-2 rounded-full">Apache Spark</span>
+                <span class="bg-green-700 text-white px-4 py-2 rounded-full">Apache Hive</span>
+                <span class="bg-yellow-600 text-white px-4 py-2 rounded-full">Python</span>
+                <span class="bg-purple-600 text-white px-4 py-2 rounded-full">PySpark</span>
+            </div>
+            <p class="text-gray-300 mt-6 text-lg">Relatório de Análise • Outubro 2024</p>
+        </div>
+
+        <!-- EXECUTIVE SUMMARY -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8 text-center">📊 Executive Summary</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Card 1 -->
+                <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 card-hover transition-all duration-300 border border-gray-600">
+                    <div class="text-6xl mb-4">🔭</div>
+                    <div class="text-5xl font-black text-white mb-2">5,759</div>
+                    <div class="text-xl font-semibold text-gray-200 mb-1">Exoplanetas Analisados</div>
+                    <div class="text-gray-400">NASA Exoplanet Archive</div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 card-hover transition-all duration-300 border border-gray-600">
+                    <div class="text-6xl mb-4">🌍</div>
+                    <div class="text-5xl font-black text-white mb-2">65 <span class="text-2xl text-gray-300">(1.13%)</span></div>
+                    <div class="text-xl font-semibold text-gray-200 mb-1">Candidatos Habitáveis</div>
+                    <div class="text-gray-400">Habitability Score ≥ 3</div>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 card-hover transition-all duration-300 border border-gray-600">
+                    <div class="text-6xl mb-4">📡</div>
+                    <div class="text-5xl font-black text-white mb-2">71.4%</div>
+                    <div class="text-xl font-semibold text-gray-200 mb-1">Transit Method</div>
+                    <div class="text-gray-400">4,111 descobertas</div>
+                </div>
+                
+                <!-- Card 4 -->
+                <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 card-hover transition-all duration-300 border border-gray-600">
+                    <div class="text-6xl mb-4">⭐</div>
+                    <div class="text-3xl font-black text-white mb-2">Kepler-442 b</div>
+                    <div class="text-xl font-semibold text-gray-200 mb-1">Score Perfeito: 4.0</div>
+                    <div class="text-gray-400">1,206 anos-luz</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- METODOLOGIA -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8">🔬 Metodologia</h2>
+            
+            <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 mb-8 border border-gray-600">
+                <h3 class="text-2xl font-bold text-white mb-6">Pipeline Big Data</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">📥</div>
+                        <h4 class="text-lg font-semibold text-white">Ingestão</h4>
+                        <p class="text-gray-300">Download via API Python</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">💾</div>
+                        <h4 class="text-lg font-semibold text-white">Storage</h4>
+                        <p class="text-gray-300">HDFS (Hadoop Distributed File System)</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">⚡</div>
+                        <h4 class="text-lg font-semibold text-white">Processing</h4>
+                        <p class="text-gray-300">Apache Spark (PySpark)</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">🔍</div>
+                        <h4 class="text-lg font-semibold text-white">Querying</h4>
+                        <p class="text-gray-300">Apache Hive (HiveQL)</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">📊</div>
+                        <h4 class="text-lg font-semibold text-white">Format</h4>
+                        <p class="text-gray-300">Parquet (columnar storage)</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">🐳</div>
+                        <h4 class="text-lg font-semibold text-white">Ambiente</h4>
+                        <p class="text-gray-300">Docker containerizado</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 border border-gray-600">
+                <h3 class="text-2xl font-bold text-white mb-6">Habitability Score (0-4 pontos)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-gray-600">
+                                <th class="text-white font-semibold p-3">Critério</th>
+                                <th class="text-white font-semibold p-3">Pontos</th>
+                                <th class="text-white font-semibold p-3">Range</th>
+                                <th class="text-white font-semibold p-3">Descrição</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-gray-200 p-3">Tamanho do Planeta</td>
+                                <td class="text-green-400 p-3 font-semibold">+1</td>
+                                <td class="text-gray-300 p-3">0.5-2× Terra</td>
+                                <td class="text-gray-300 p-3">Similar ao tamanho da Terra</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-gray-200 p-3">Temperatura</td>
+                                <td class="text-green-400 p-3 font-semibold">+1</td>
+                                <td class="text-gray-300 p-3">200-350 K</td>
+                                <td class="text-gray-300 p-3">Faixa de temperatura adequada</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-gray-200 p-3">Tipo de Estrela</td>
+                                <td class="text-green-400 p-3 font-semibold">+1</td>
+                                <td class="text-gray-300 p-3">4500-7000 K</td>
+                                <td class="text-gray-300 p-3">Estrela tipo Sol</td>
+                            </tr>
+                            <tr>
+                                <td class="text-gray-200 p-3">Distância da Terra</td>
+                                <td class="text-green-400 p-3 font-semibold">+1</td>
+                                <td class="text-gray-300 p-3">&lt;500 parsecs</td>
+                                <td class="text-gray-300 p-3">Relativamente próximo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- DESCOBERTAS PRINCIPAIS -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8">🔍 Descobertas Principais</h2>
+            
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6 border border-gray-600">
+                    <h3 class="text-2xl font-bold text-white mb-4">Métodos de Descoberta</h3>
+                    <div class="chart-container">
+                        <canvas id="discoveryChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6 border border-gray-600">
+                    <h3 class="text-2xl font-bold text-white mb-4">Categorias de Planetas</h3>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Table -->
+            <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 border border-gray-600">
+                <h3 class="text-2xl font-bold text-white mb-6">Estatísticas Gerais</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-gray-600">
+                                <th class="text-white font-semibold p-3">Métrica</th>
+                                <th class="text-white font-semibold p-3">Valor</th>
+                                <th class="text-white font-semibold p-3">Unidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-gray-200 p-3">Raio Médio</td>
+                                <td class="text-white font-semibold p-3">5.09</td>
+                                <td class="text-gray-300 p-3">× Terra</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-gray-200 p-3">Massa Média</td>
+                                <td class="text-white font-semibold p-3">195.96</td>
+                                <td class="text-gray-300 p-3">× Terra</td>
+                            </tr>
+                            <tr>
+                                <td class="text-gray-200 p-3">Temperatura Média</td>
+                                <td class="text-white font-semibold p-3">863 K</td>
+                                <td class="text-gray-300 p-3">(590°C)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TOP 5 CANDIDATOS -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8">🏆 Top 5 Candidatos a "Terra 2.0"</h2>
+            
+            <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 mb-8 border border-gray-600">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-gray-600">
+                                <th class="text-white font-semibold p-3">#</th>
+                                <th class="text-white font-semibold p-3">Planeta</th>
+                                <th class="text-white font-semibold p-3">Score</th>
+                                <th class="text-white font-semibold p-3">Raio</th>
+                                <th class="text-white font-semibold p-3">Temp</th>
+                                <th class="text-white font-semibold p-3">Distância</th>
+                                <th class="text-white font-semibold p-3">Método</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-700 bg-yellow-900 bg-opacity-30">
+                                <td class="text-2xl p-3">🥇</td>
+                                <td class="text-white font-bold p-3 text-lg">Kepler-442 b</td>
+                                <td class="text-green-400 font-bold p-3 text-lg">4.0</td>
+                                <td class="text-gray-200 p-3">1.34×</td>
+                                <td class="text-gray-200 p-3">233 K (-40°C)</td>
+                                <td class="text-gray-200 p-3">370 pc (1,206 ly)</td>
+                                <td class="text-gray-200 p-3">Transit</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-2xl p-3">🥈</td>
+                                <td class="text-gray-200 p-3">Kepler-62 f</td>
+                                <td class="text-green-400 font-semibold p-3">4.0</td>
+                                <td class="text-gray-300 p-3">1.41×</td>
+                                <td class="text-gray-300 p-3">208 K (-65°C)</td>
+                                <td class="text-gray-300 p-3">368 pc (1,200 ly)</td>
+                                <td class="text-gray-300 p-3">Transit</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-2xl p-3">🥉</td>
+                                <td class="text-gray-200 p-3">Kepler-186 f</td>
+                                <td class="text-green-400 font-semibold p-3">4.0</td>
+                                <td class="text-gray-300 p-3">1.17×</td>
+                                <td class="text-gray-300 p-3">188 K (-85°C)</td>
+                                <td class="text-gray-300 p-3">178 pc (580 ly)</td>
+                                <td class="text-gray-300 p-3">Transit</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-xl p-3">4</td>
+                                <td class="text-gray-200 p-3">Kepler-1649 c</td>
+                                <td class="text-orange-400 font-semibold p-3">3.0</td>
+                                <td class="text-gray-300 p-3">1.06×</td>
+                                <td class="text-gray-300 p-3">234 K (-39°C)</td>
+                                <td class="text-gray-300 p-3">91 pc (297 ly)</td>
+                                <td class="text-gray-300 p-3">Transit</td>
+                            </tr>
+                            <tr>
+                                <td class="text-xl p-3">5</td>
+                                <td class="text-gray-200 p-3">Kepler-296 f</td>
+                                <td class="text-orange-400 font-semibold p-3">3.0</td>
+                                <td class="text-gray-300 p-3">1.75×</td>
+                                <td class="text-gray-300 p-3">269 K (-4°C)</td>
+                                <td class="text-gray-300 p-3">533 pc (1,738 ly)</td>
+                                <td class="text-gray-300 p-3">Transit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Highlight Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-blue-900 bg-opacity-50 rounded-2xl p-6 text-center">
+                    <div class="text-4xl mb-3">🎯</div>
+                    <h4 class="text-white font-bold text-lg mb-2">Mais Próximo</h4>
+                    <p class="text-gray-200">Kepler-1649 c</p>
+                    <p class="text-gray-400 text-sm">91 parsecs</p>
+                </div>
+                <div class="bg-green-900 bg-opacity-50 rounded-2xl p-6 text-center">
+                    <div class="text-4xl mb-3">📏</div>
+                    <h4 class="text-white font-bold text-lg mb-2">Mais Parecido com Terra</h4>
+                    <p class="text-gray-200">Kepler-1649 c</p>
+                    <p class="text-gray-400 text-sm">1.06× raio</p>
+                </div>
+                <div class="bg-red-900 bg-opacity-50 rounded-2xl p-6 text-center">
+                    <div class="text-4xl mb-3">🌡️</div>
+                    <h4 class="text-white font-bold text-lg mb-2">Mais Quente</h4>
+                    <p class="text-gray-200">Kepler-296 f</p>
+                    <p class="text-gray-400 text-sm">269 K (-4°C)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMPARAÇÃO TERRA VS CANDIDATOS -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8">🌎 Terra vs Candidatos</h2>
+            
+            <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 border border-gray-600">
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- DISTÂNCIAS E VIAGEM ESPACIAL -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8">🚀 Distâncias e Viagem Espacial</h2>
+            
+            <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 border border-gray-600">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-gray-600">
+                                <th class="text-white font-semibold p-3">Planeta</th>
+                                <th class="text-white font-semibold p-3">Parsecs</th>
+                                <th class="text-white font-semibold p-3">Anos-Luz</th>
+                                <th class="text-white font-semibold p-3">Tempo (0.1c)*</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-gray-200 p-3">Kepler-1649 c</td>
+                                <td class="text-white font-semibold p-3">91</td>
+                                <td class="text-white font-semibold p-3">297</td>
+                                <td class="text-gray-300 p-3">~2,970 anos</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-gray-200 p-3">Kepler-186 f</td>
+                                <td class="text-white font-semibold p-3">178</td>
+                                <td class="text-white font-semibold p-3">580</td>
+                                <td class="text-gray-300 p-3">~5,800 anos</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-gray-200 p-3">Kepler-62 f</td>
+                                <td class="text-white font-semibold p-3">368</td>
+                                <td class="text-white font-semibold p-3">1,200</td>
+                                <td class="text-gray-300 p-3">~12,000 anos</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="text-gray-200 p-3">Kepler-442 b</td>
+                                <td class="text-white font-semibold p-3">370</td>
+                                <td class="text-white font-semibold p-3">1,206</td>
+                                <td class="text-gray-300 p-3">~12,060 anos</td>
+                            </tr>
+                            <tr>
+                                <td class="text-gray-200 p-3">Kepler-296 f</td>
+                                <td class="text-white font-semibold p-3">533</td>
+                                <td class="text-white font-semibold p-3">1,738</td>
+                                <td class="text-gray-300 p-3">~17,380 anos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-gray-400 text-sm mt-4">*Velocidade: 10% da velocidade da luz</p>
+            </div>
+        </section>
+
+        <!-- TECNOLOGIAS UTILIZADAS -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8">💻 Tecnologias Utilizadas</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-blue-900 bg-opacity-50 rounded-2xl p-6 card-hover transition-all duration-300">
+                    <div class="text-4xl mb-4">🐘</div>
+                    <h3 class="text-white font-bold text-xl mb-2">Apache Hadoop</h3>
+                    <p class="text-gray-200 mb-2">Distributed Storage (HDFS)</p>
+                    <p class="text-gray-400 text-sm">Armazenamento escalável</p>
+                </div>
+                
+                <div class="bg-orange-900 bg-opacity-50 rounded-2xl p-6 card-hover transition-all duration-300">
+                    <div class="text-4xl mb-4">⚡</div>
+                    <h3 class="text-white font-bold text-xl mb-2">Apache Spark</h3>
+                    <p class="text-gray-200 mb-2">In-memory Computing</p>
+                    <p class="text-gray-400 text-sm">100× mais rápido que MapReduce</p>
+                </div>
+                
+                <div class="bg-yellow-900 bg-opacity-50 rounded-2xl p-6 card-hover transition-all duration-300">
+                    <div class="text-4xl mb-4">🐝</div>
+                    <h3 class="text-white font-bold text-xl mb-2">Apache Hive</h3>
+                    <p class="text-gray-200 mb-2">SQL Interface</p>
+                    <p class="text-gray-400 text-sm">Data Warehouse para Big Data</p>
+                </div>
+                
+                <div class="bg-green-900 bg-opacity-50 rounded-2xl p-6 card-hover transition-all duration-300">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h3 class="text-white font-bold text-xl mb-2">Parquet</h3>
+                    <p class="text-gray-200 mb-2">Columnar Format</p>
+                    <p class="text-gray-400 text-sm">Compressão e recuperação eficientes</p>
+                </div>
+                
+                <div class="bg-blue-700 bg-opacity-50 rounded-2xl p-6 card-hover transition-all duration-300">
+                    <div class="text-4xl mb-4">🐳</div>
+                    <h3 class="text-white font-bold text-xl mb-2">Docker</h3>
+                    <p class="text-gray-200 mb-2">Containerization</p>
+                    <p class="text-gray-400 text-sm">Ambiente consistente</p>
+                </div>
+                
+                <div class="bg-purple-900 bg-opacity-50 rounded-2xl p-6 card-hover transition-all duration-300">
+                    <div class="text-4xl mb-4">🐍</div>
+                    <h3 class="text-white font-bold text-xl mb-2">Python + PySpark</h3>
+                    <p class="text-gray-200 mb-2">Programming</p>
+                    <p class="text-gray-400 text-sm">Feature engineering e análises</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- KEY FINDINGS -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8">🔑 Key Findings</h2>
+            
+            <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 border border-gray-600">
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">1</div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">Transit Method Dominance</h3>
+                            <p class="text-gray-300">71.4% das descobertas usam método Transit</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">2</div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">3 Candidatos Perfeitos</h3>
+                            <p class="text-gray-300">Kepler-442 b, 62 f e 186 f com score 4.0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-yellow-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">3</div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">Candidato Mais Próximo</h3>
+                            <p class="text-gray-300">Kepler-1649 c a apenas 297 anos-luz</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">4</div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">Mais Similar à Terra</h3>
+                            <p class="text-gray-300">Kepler-1649 c (1.06× raio)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">5</div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">Mais Quente</h3>
+                            <p class="text-gray-300">Kepler-296 f a 269 K (-4°C, perto do ponto de congelamento)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-orange-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">6</div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">Super-Earths Lideram</h3>
+                            <p class="text-gray-300">1,571 planetas na categoria mais habitável</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIÇÕES APRENDIDAS -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8">🎓 Lições Aprendidas</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-green-900 bg-opacity-50 rounded-2xl p-6">
+                    <div class="text-4xl mb-4">✅</div>
+                    <h3 class="text-white font-bold text-xl mb-3">Escalabilidade</h3>
+                    <p class="text-gray-200">Big Data stack processa datasets massivos sem esforço</p>
+                    <p class="text-gray-400 text-sm mt-2">Ready for future data growth</p>
+                </div>
+                
+                <div class="bg-blue-900 bg-opacity-50 rounded-2xl p-6">
+                    <div class="text-4xl mb-4">✅</div>
+                    <h3 class="text-white font-bold text-xl mb-3">Performance</h3>
+                    <p class="text-gray-200">Spark processa 5,759 planetas em segundos (vs horas com ferramentas tradicionais)</p>
+                    <p class="text-gray-400 text-sm mt-2">100× speed improvement</p>
+                </div>
+                
+                <div class="bg-purple-900 bg-opacity-50 rounded-2xl p-6">
+                    <div class="text-4xl mb-4">✅</div>
+                    <h3 class="text-white font-bold text-xl mb-3">Feature Engineering</h3>
+                    <p class="text-gray-200">Score customizado permite identificação rápida de candidatos</p>
+                    <p class="text-gray-400 text-sm mt-2">Data science meets astronomy</p>
+                </div>
+                
+                <div class="bg-orange-900 bg-opacity-50 rounded-2xl p-6">
+                    <div class="text-4xl mb-4">✅</div>
+                    <h3 class="text-white font-bold text-xl mb-3">Aplicação Real</h3>
+                    <p class="text-gray-200">Projeto demonstra habilidades práticas de Big Data para empregadores</p>
+                    <p class="text-gray-400 text-sm mt-2">Portfolio-ready case study</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONCLUSÃO -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-white mb-8">💫 Conclusão</h2>
+            
+            <div class="bg-gradient-to-r from-blue-900 to-purple-900 bg-opacity-50 rounded-2xl p-8 border border-gray-600">
+                <p class="text-white text-lg leading-relaxed">
+                    Esta análise demonstra o poder do Big Data em pesquisa astronômica. De um universo de 5,759 exoplanetas conhecidos, identificamos 65 mundos potencialmente habitáveis usando computação distribuída. <strong>Kepler-442 b</strong> emerge como nosso melhor candidato a 'Terra 2.0', com características ideais para vida. Embora a 1,206 anos-luz de distância, esses descobrimentos inspiram a continuação da busca por vida além da Terra.
+                </p>
+                <p class="text-gray-300 mt-4 italic">
+                    "The universe is not only stranger than we imagine, it is stranger than we can imagine." - J.B.S. Haldane
+                </p>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center">
+            <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 border border-gray-600">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
+                    <div>
+                        <div class="text-2xl mb-2">📁</div>
+                        <p class="text-gray-300">GitHub</p>
+                        <a href="#" class="text-blue-400 hover:text-blue-300">github.com/yourusername/exoplanet-big-data-analysis</a>
+                    </div>
+                    <div>
+                        <div class="text-2xl mb-2">💼</div>
+                        <p class="text-gray-300">LinkedIn</p>
+                        <p class="text-gray-400">#BigData #DataScience #Astronomy #Spark #Hadoop</p>
+                    </div>
+                    <div>
+                        <div class="text-2xl mb-2">🌐</div>
+                        <p class="text-gray-300">Data Source</p>
+                        <p class="text-gray-400">NASA Exoplanet Archive</p>
+                    </div>
+                    <div>
+                        <div class="text-2xl mb-2">📅</div>
+                        <p class="text-gray-300">Analysis Date</p>
+                        <p class="text-gray-400">Outubro 2024</p>
+                    </div>
+                    <div>
+                        <div class="text-2xl mb-2">🛠️</div>
+                        <p class="text-gray-300">Made with</p>
+                        <p class="text-gray-400">Hadoop 3.3 | Spark 3.5 | Hive 3.1 | Python 3.10</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Charts JavaScript -->
+    <script>
+        // Discovery Methods Pie Chart
+        const discoveryCtx = document.getElementById('discoveryChart').getContext('2d');
+        new Chart(discoveryCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Transit', 'Radial Velocity', 'Microlensing', 'Imaging', 'Eclipse Timing', 'Transit Timing', 'Others'],
+                datasets: [{
+                    data: [71.4, 18.5, 3.6, 2.9, 0.4, 0.4, 2.8],
+                    backgroundColor: [
+                        '#0B3D91',
+                        '#FC3D21',
+                        '#10B981',
+                        '#8B5CF6',
+                        '#F59E0B',
+                        '#EC4899',
+                        '#6B7280'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Planet Categories Bar Chart
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Super-Earth', 'Gas Giant', 'Neptune-like', 'Terrestrial'],
+                datasets: [{
+                    data: [1571, 1434, 1381, 1373],
+                    backgroundColor: ['#10B981', '#FC3D21', '#8B5CF6', '#F59E0B']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255,255,255,0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255,255,255,0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Earth vs Candidates Comparison Chart
+        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+        new Chart(comparisonCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Earth', 'Kepler-442 b', 'Kepler-62 f', 'Kepler-186 f', 'Kepler-1649 c'],
+                datasets: [
+                    {
+                        label: 'Radius (×Earth)',
+                        data: [1.0, 1.34, 1.41, 1.17, 1.06],
+                        backgroundColor: '#0B3D91',
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Temperature (×100K)',
+                        data: [2.88, 2.33, 2.08, 1.88, 2.34],
+                        backgroundColor: '#FC3D21',
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255,255,255,0.1)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                            color: 'rgba(255,255,255,0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9920c31e5daaabfb","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.9.1","token":"4edd5f8ec12a48cfa682ab8261b80a79"}' crossorigin="anonymous"></script>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDqXwIPjVUnkxQn2ZQmOFw5p0Ui8iOhxsf6tKoHRqZCA9iQ87aAO%2BfnixOpAbiSTUl2u1zYLFZjxz7XafUsG%2BsHaU233oEVBQHLeR%2B4ySegk6YjfbWq2bE6zfoPM9BgORUTL%2BTDzAAJHhJalsXLHVw1fWobLJf%2BJRfyKVEliZ%2BJEftKL%2FvRX93kgUe0aBwqysT5MvtUR%2FmBZJDoMXt5LaothL1iupRvCD6PhkcPtGt4hT1RSq6mihtCK13%2BZd3jivZfthiTIfrgve3XcaTUSMmT9rRRs5zGRKgGmOpt6sqGWoHDbidE4IUgyqt3cZXdeUm51T0I8usNPQCNfKiCVKUL%2BYmSsURffJBOl%2BslG1KrjtARd%2BmVqjP85gR0qvKc1MKOiq1PX8KPZT0qYQJNh7xwsplAOwevEetPcCH%2BhvEBYnDFZLjk7YPs2BEq7ZTqSkz7OY74AUTuzLD1VoL%2BEFYhNTxu1qoBu8EhlL3jVPIOQBWyaone0YiikSptbKNGndfaFF%2B3hXUSP2b%2BPyDpY5AGU%3D";
+        window.__genspark_locale = "pt-BR";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDqXwIPjVUnkxQn2ZQmOFw5p0Ui8iOhxsf6tKoHRqZCA9iQ87aAO+fnixOpAbiSTUl2u1zYLFZjxz7XafUsG+sHaU233oEVBQHLeR+4ySegk6YjfbWq2bE6zfoPM9BgORUTL+TDzAAJHhJalsXLHVw1fWobLJf+JRfyKVEliZ+JEftKL/vRX93kgUe0aBwqysT5MvtUR/mBZJDoMXt5LaothL1iupRvCD6PhkcPtGt4hT1RSq6mihtCK13+Zd3jivZfthiTIfrgve3XcaTUSMmT9rRRs5zGRKgGmOpt6sqGWoHDbidE4IUgyqt3cZXdeUm51T0I8usNPQCNfKiCVKUL+YmSsURffJBOl+slG1KrjtARd+mVqjP85gR0qvKc1MKOiq1PX8KPZT0qYQJNh7xwsplAOwevEetPcCH+hvEBYnDFZLjk7YPs2BEq7ZTqSkz7OY74AUTuzLD1VoL+EFYhNTxu1qoBu8EhlL3jVPIOQBWyaone0YiikSptbKNGndfaFF+3hXUSP2b+PyDpY5AGU=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
